@@ -3,7 +3,7 @@ from langchain.schema.runnable import RunnablePassthrough
 
 from generate_embeddings import generate_embeddings
 from generator import init_llm
-from parsing_data import parsing_docs
+from parsing_data import parsing_docs_simpson_park
 from retriever import init_retriever
 
 
@@ -23,7 +23,7 @@ def create_rag_chain(retriever, llm, llm_prompt):
 
 
 def build(url):
-    docs = parsing_docs(url)
+    docs = parsing_docs_simpson_park(url)
     embeddings = generate_embeddings(docs)
     retriever = init_retriever(embeddings)
     llm, llm_prompt = init_llm()

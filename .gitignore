@@ -1,5 +1,9 @@
-<<<<<<< HEAD
 API_KEY_PRIVATE.py
-=======
 .venv/
->>>>>>> 7e8341727afcfd450d7b587f33882ce4999235d8
+.__pycache__/
+.pytest_cache/
+__pycache__/parsing_data.cpython-311.pyc
+__pycache__/build_rag_chain.cpython-311.pyc
+chroma_db/chroma.sqlite3
+chroma_db/31914944-5691-4d9d-91b4-5d4b753a7190/length.bin
+tests/__pycache__/test_parse_doc.cpython-311-pytest-8.2.1.pyc
