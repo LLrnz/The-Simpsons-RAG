@@ -22,11 +22,11 @@ def create_rag_chain(retriever, llm, llm_prompt):
     return rag_chain
 
 
-def build(url):
+def build(url, prompt_template):
     docs = parsing_docs_simpson_park(url)
     embeddings = generate_embeddings(docs)
-    retriever = init_retriever(embeddings)
-    llm, llm_prompt = init_llm()
+    retriever = init_retriever(embeddings, len(url))
+    llm, llm_prompt = init_llm(prompt_template)
     rag_chain = create_rag_chain(retriever, llm, llm_prompt)
 
     return rag_chain
