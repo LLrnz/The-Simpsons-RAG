@@ -1,4 +1,4 @@
-API_KEY_PRIVATE.py
+code.env/
 .venv/
 .__pycache__/
 .pytest_cache/
@@ -7,3 +7,5 @@ __pycache__/build_rag_chain.cpython-311.pyc
 chroma_db/chroma.sqlite3
 chroma_db/31914944-5691-4d9d-91b4-5d4b753a7190/length.bin
 tests/__pycache__/test_parse_doc.cpython-311-pytest-8.2.1.pyc
+__pycache__/*
+.idea/
