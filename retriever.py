@@ -1,4 +1,4 @@
-from langchain_chroma import Chroma
+from langchain_community.vectorstores import Chroma
 
 
 def init_retriever(gemini_embeddings, len_url):

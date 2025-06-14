@@ -1,9 +1,23 @@
+# Environment variables
+.env
+
+# Python cache and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
 API_KEY_PRIVATE.py
 .venv/
-.__pycache__/
+venv/ # Common alternative name for virtual env
+
+# Test artifacts
 .pytest_cache/
-__pycache__/parsing_data.cpython-311.pyc
-__pycache__/build_rag_chain.cpython-311.pyc
-chroma_db/chroma.sqlite3
-chroma_db/31914944-5691-4d9d-91b4-5d4b753a7190/length.bin
-tests/__pycache__/test_parse_doc.cpython-311-pytest-8.2.1.pyc
+
+# Chroma DB - good to ignore if it's locally generated and large
+chroma_db/
+
+# IDE and editor specific files
+.idea/
+.vscode/

@@ -1,10 +1,15 @@
 from langchain.docstore.document import Document
-from langchain.document_loaders import WebBaseLoader
+from langchain_community.document_loaders import WebBaseLoader
+import os
 
 
 def parsing_docs(url):
-    loader = WebBaseLoader(url)
+    user_agent = os.getenv("USER_AGENT")
+    headers = {"User-Agent": user_agent} if user_agent else {}
+    loader = WebBaseLoader(url, requests_kwargs={"headers": headers})
     docs = loader.load()
+    if not docs:
+        raise ValueError(f"No content loaded from URL: {url}")
     text_content = docs[0].page_content
 
     text_content_1 = text_content.split("search site", 1)[1]
@@ -15,10 +20,13 @@ def parsing_docs(url):
 
 
 def parsing_doc_simpson_park(url):
-    loader = WebBaseLoader(url)
+    user_agent = os.getenv("USER_AGENT")
+    headers = {"User-Agent": user_agent} if user_agent else {}
+    loader = WebBaseLoader(url, requests_kwargs={"headers": headers})
     docs = loader.load()
+    if not docs:
+        raise ValueError(f"No content loaded from URL: {url}")
     text_content = docs[0].page_content
-    print(text_content)
     text_content_1 = text_content.split("Programme TV complet", 1)[1]
     final_text = text_content_1.split("L'équipe du site", 1)[0]
 
@@ -27,14 +35,21 @@ def parsing_doc_simpson_park(url):
 
 
 def parsing_docs_simpson_park(urls):
-    loader = WebBaseLoader(urls)
+    user_agent = os.getenv("USER_AGENT")
+    headers = {"User-Agent": user_agent} if user_agent else {}
+    loader = WebBaseLoader(urls, requests_kwargs={"headers": headers})
     docs = loader.load()
     final_docs = []
 
     for i, doc in enumerate(docs):
         text_content = doc.page_content
-        text_content_1 = text_content.split("Programme TV complet", 1)[1]
-        final_text = text_content_1.split("L'équipe du site", 1)[0]
+        try:
+            text_content_1 = text_content.split("Programme TV complet", 1)[1]
+            final_text = text_content_1.split("L'équipe du site", 1)[0]
+        except IndexError:
+            print(f"Warning: Could not parse content from {urls[i]} as expected. Storing raw content.")
+            final_text = text_content # Fallback to raw content if split fails
+
         final_docs.append(
             Document(page_content=final_text, metadata={"source": urls[i]})
         )
