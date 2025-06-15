@@ -1,7 +1,8 @@
 from db import catalogue
+from build_rag_chain import create_retriever
 from build_rag_chain import build
 
-rag_chain = build(catalogue)
+
 
 # evaluation du retriever
 
@@ -75,14 +76,15 @@ def calculate_faithfulness_score(response, context):
     return faithfulness_score
 
 
-def evaluate_faithfulness(rag_chain, test_queries):
+def evaluate_faithfulness(retriever, test_queries):
+    rag_chain = build(retriever)
     faithfulness_scores = []
 
     for test in test_queries:
         query = test["query"]
         expected_docs = test["expected_docs"]
 
-        retrieved_docs = rag_chain.retriever.get_relevant_documents(query)
+        retrieved_docs = retriever.get_relevant_documents(query)
         response = rag_chain.invoke(query)
         context = " ".join([doc.page_content for doc in retrieved_docs])
 
@@ -96,14 +98,15 @@ def evaluate_faithfulness(rag_chain, test_queries):
     print(f"Average Faithfulness Score: {average_faithfulness:.2f}")
 
 
+retriever = create_retriever(catalogue)
 
 test_queries = [
-    {"query": "Noël Homer", "expected_docs": ["vf-nol-mortel"]},
-    {"query": "Bart génie", "expected_docs": ["vf-bart_le_genie"]},
+    {"query": "dans quel épisode Skinner dit Maintenant tous les élèves du cours moyen deuxième année vont vous charmer avec un... pot pourri, de nos airs de Noël favori ?", "expected_docs": ["vf-nol-mortel"]},
+    {"query": "Dans Bart le géni, quel personnages sont presents ?", "expected_docs": ["vf-bart_le_genie"]},
 
 ]
 
 print("évaluation du RAG : \n")
-evaluate_retriever_precision_and_recall(rag_chain.retriever, test_queries, k=3)
+evaluate_retriever_precision_and_recall(retriever, test_queries, k=3)
 print("évaluation de la génération: \n")
-evaluate_faithfulness(rag_chain, test_queries)
+evaluate_faithfulness(retriever, test_queries)

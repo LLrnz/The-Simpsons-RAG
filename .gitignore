@@ -1,4 +1,4 @@
-code.env/
+API_KEY_PRIVATE.py/
 .venv/
 .__pycache__/
 .pytest_cache/
