@@ -8,7 +8,7 @@ def init_llm(temperature, max_tokens, top_p, max_retries):
     llm = ChatGoogleGenerativeAI(
         model="gemini-2.0-flash",
         temperature=temperature,
-        max_token=max_tokens,
+        max_tokens=max_tokens,
         top_p=top_p,
         max_retries=max_retries,
     )
@@ -18,6 +18,6 @@ def init_llm(temperature, max_tokens, top_p, max_retries):
     Use five sentences maximum and keep the answer concise.\n
     Question: {question} \nContext: {context} \nAnswer:"""
 
-    llm_prompt = prompts.PromptTemplate.from_template(prompt_template)
+    llm_prompt = prompts.PromptTemplate.from_template(llm_prompt_template)
 
     return llm, llm_prompt

@@ -23,5 +23,9 @@ rag_chain = build(
         "https://simpsonspark.com/scripts/vf-un_clown_a_l_ombre",
         "https://simpsonspark.com/scripts/vf-une_soiree_d_enfer",
     ],
-    prompt_template,
+    temperature=1,
+    max_tokens=256,
+    top_p=1,
+    max_retries=3,
+    k=3,
 )
