@@ -1,4 +1,4 @@
-from build_rag_chain import build
+from build_rag_chain import build_url
 
 
 prompt_template = """Tu es un assistant dont la tache est de répondre à des questions.
@@ -32,11 +32,11 @@ with open("scraped_scripts.csv", "r") as file:
     simpsons_archive = simpsons_archive[1:]
 
 
-rag_chain = build(
-    simpsons_archive,
+rag_chain = build_url(
+    urls=simpsons_archive,
     temperature=1,
-    max_tokens=256,
-    top_p=1,
+    max_tokens=500,
+    top_p=0.1,
     max_retries=3,
     k=3,
 )

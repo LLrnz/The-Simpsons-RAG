@@ -66,17 +66,60 @@ def parsing_docs_simpson_archive(urls):
     docs = loader.load()
     final_docs = []
 
-    # for i, doc in enumerate(docs):
-    #     text_content = doc.page_content
-    #     try:
-    #         text_content_1 = text_content.split("Programme TV complet", 1)[1]
-    #         final_text = text_content_1.split("L'équipe du site", 1)[0]
-    #     except IndexError:
-    #         print(f"Warning: Could not parse content from {urls[i]} as expected. Storing raw content.")
-    #         final_text = text_content # Fallback to raw content if split fails
+    for i, doc in enumerate(docs):
+        text_content = doc.page_content
 
-    #     final_docs.append(
-    #         Document(page_content=final_text, metadata={"source": urls[i]})
-    #     )
+        metadatas = doc.metadata
+
+        writer = text_content.split("Written by ", 1)
+        if len(writer) > 1:
+            writer = writer[1]
+            writer = writer.split("\n", 1)[0]
+        else:
+            writer = "not found"
+        metadatas["writer"] = writer
+
+        director = text_content.split("Directed by ", 1)
+        if len(director) > 1:
+            director = director[1]
+            director = director.split("\n", 1)[0]
+        else:
+            director = "not found"
+        metadatas["director"] = director
+
+        airdate = text_content.split("Original airdate in N.A.: ", 1)
+        if len(airdate) > 1:
+            airdate = airdate[1]
+            airdate = airdate.split("\n", 1)[0]
+        else:
+            airdate = "not found"
+        metadatas["airdate"] = airdate
+
+        voices = text_content.split("Voice credits", 1)
+        if len(voices) > 1:
+            voices = voices[1]
+            voices = voices.split("Movie (and other) references", 1)[0]
+        else:
+            voices = "not found"
+
+        metadatas["voices"] = transform_text_to_list(voices)
+
+        final_docs.append(Document(page_content=text_content, metadata=metadatas))
 
     return docs
+
+
+def transform_text_to_list(text):
+    lines = text.strip().split("\n")
+    names = []
+    for line in lines:
+        line = line.strip()
+        if (
+            line.startswith("-")
+            and not line.startswith("- Starring")
+            and not line.startswith("- Special Guest Voices")
+            and not line.startswith("- Also Starring")
+        ):
+            name = line[1:].strip()
+            names.append(name)
+    return str(names)

@@ -116,7 +116,7 @@ if "messages" not in st.session_state:
     st.session_state.messages = [
         {
             "role": "assistant",
-            "content": "Woo hoo! Je suis prêt à parler des Simpsons. Qu'est-ce que tu veux savoir?",
+            "content": "Woo hoo! Let's talk about the Simpsons. What do you wanna know?",
         }
     ]
 
@@ -128,7 +128,7 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"], avatar=avatar_icon):
         st.markdown(message["content"])
 
-if prompt := st.chat_input("Demande quelque chose à propos des Simpsons..."):
+if prompt := st.chat_input("Ask something about the Simpsons..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user", avatar=USER_AVATAR_EMOJI):
         st.markdown(prompt)
@@ -152,7 +152,7 @@ if prompt := st.chat_input("Demande quelque chose à propos des Simpsons..."):
             st.toast("D'oh! Couldn't play sound.", icon="🔇")
 
     with st.chat_message("assistant", avatar=HOMER_AVATAR_URL):
-        with st.spinner("D'oh! Je connecte mes neuronnes..."):
+        with st.spinner("D'oh! Wiring brain..."):
             assistant_response_content = ""
             try:
 
@@ -165,8 +165,8 @@ if prompt := st.chat_input("Demande quelque chose à propos des Simpsons..."):
                 )
 
             except Exception as e:
-                st.error(f"Ay caramba! Il y a eu une erreur: {e}")
-                assistant_response_content = "Mmm... donuts... J'veux dire que, j'ai eu un problème. Essaie de demander autre chose."
+                st.error(f"Ay caramba! There is an error: {e}")
+                assistant_response_content = "Mmm... donuts... I mean, I got an error. Try asking something else."
                 st.markdown(assistant_response_content)
 
     st.session_state.messages.append(

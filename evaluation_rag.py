@@ -58,6 +58,10 @@ def evaluate_retriever_precision_and_recall(retriever, test_queries, k=3):
         recalls.append(recall_at_k)
 
         print(f"Query: {query}")
+        sources = []
+        for doc in retrieved_docs[:k]:
+            sources.append(doc.metadata["source"])
+        print(f"expected : {expected_docs}, retrieved : {sources}")
         print(f"Context Precision@{k}: {precision_at_k:.2f}")
         print(f"Context Recall@{k}: {recall_at_k:.2f}")
 
@@ -88,9 +92,7 @@ def calculate_faithfulness_score(response, context):
 
 
 def evaluate_faithfulness(retriever, test_queries):
-    rag_chain = build(
-        retriever=retriever,
-    )
+    rag_chain = build(retriever=retriever, temperature=0.1, top_p=0.1)
     faithfulness_scores = []
 
     for test in test_queries:
@@ -123,12 +125,47 @@ retriever = create_retriever(simpsons_archive, 3)
 
 test_queries = [
     {
-        "query": "dans quel épisode Skinner dit Maintenant tous les élèves du cours moyen deuxième année vont vous charmer avec un... pot pourri, de nos airs de Noël favori ?",
-        "expected_docs": ["https://simpsonspark.com/scripts/vf-nol-mortel"],
+        "query": 'In which episode does Marge say: "Have you been up all night eating cheese?"',
+        "expected_docs": ["https://www.simpsonsarchive.com/episodes/1F01.html"],
     },
     {
-        "query": "Dans Bart le géni, quel personnages sont presents ?",
-        "expected_docs": ["https://simpsonspark.com/scripts/vf-bart_le_genie"],
+        "query": "Which characters are present in the episode $pringfield?",
+        "expected_docs": ["https://www.simpsonsarchive.com/episodes/1F08.html"],
+    },
+    {
+        "query": "Who is the director of  Lisa's Date With Density?",
+        "expected_docs": ["https://www.simpsonsarchive.com/episodes/4F01.html"],
+    },
+    {
+        "query": "When was Maggie born?",
+        "expected_docs": ["https://www.simpsonsarchive.com/episodes/2F10.html"],
+    },
+    {
+        "query": "What does Hommer do so he can work from home?",
+        "expected_docs": ["https://www.simpsonsarchive.com/episodes/3F05.html"],
+    },
+    {
+        "query": "Whith whom Bart goes to tennessee?",
+        "expected_docs": ["https://www.simpsonsarchive.com/episodes/3F17.html"],
+    },
+    {
+        "query": "What are the funfacts about Sideshow Bob Roberts?",
+        "expected_docs": ["https://www.simpsonsarchive.com/episodes/2F02.html"],
+    },
+    {
+        "query": "In which episodes does Wiggum appears?",
+        "expected_docs": ["https://www.simpsonsarchive.com/episodes/2F21.html"],
+    },
+    {
+        "query": "Who is the main suspect of Mr. Burns murder? I do not want the true culprit.",
+        "expected_docs": [
+            "https://www.simpsonsarchive.com/episodes/2F20.html",
+            "https://www.simpsonsarchive.com/episodes/2F16.html",
+        ],
+    },
+    {
+        "query": "Who dubs Burns?",
+        "expected_docs": ["https://www.simpsonsarchive.com/episodes/1F16.html"],
     },
 ]
 
