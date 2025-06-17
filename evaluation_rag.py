@@ -1,3 +1,4 @@
+import csv
 from db import catalogue
 from build_rag_chain import create_retriever
 from build_rag_chain import build
@@ -88,7 +89,7 @@ def calculate_faithfulness_score(response, context):
 
 def evaluate_faithfulness(retriever, test_queries):
     rag_chain = build(
-        retriever,
+        retriever=retriever,
     )
     faithfulness_scores = []
 
@@ -110,7 +111,15 @@ def evaluate_faithfulness(retriever, test_queries):
     print(f"Average Faithfulness Score: {average_faithfulness:.2f}")
 
 
-retriever = create_retriever(catalogue)
+simpsons_archive = []
+
+with open("scraped_scripts.csv", "r") as file:
+    reader = csv.reader(file)
+    for line in reader:
+        simpsons_archive.append(line[1])
+    simpsons_archive = simpsons_archive[1:100]
+
+retriever = create_retriever(simpsons_archive, 3)
 
 test_queries = [
     {
