@@ -21,14 +21,17 @@ def create_rag_chain(retriever, llm, llm_prompt):
 
     return rag_chain
 
+
 def create_retriever(url):
     docs = parsing_docs_simpson_park(url)
     embeddings = generate_embeddings(docs)
     retriever = init_retriever(embeddings)
 
     return retriever
-def build(retriever):
-    llm, llm_prompt = init_llm()
+
+
+def build(retriever, temperature=1, max_tokens=256, top_p=1, max_retries=3):
+    llm, llm_prompt = init_llm(temperature, max_tokens, top_p, max_retries)
     rag_chain = create_rag_chain(retriever, llm, llm_prompt)
 
     return rag_chain

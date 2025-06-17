@@ -4,8 +4,14 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core import prompts
 
 
-def init_llm():
-    llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash")
+def init_llm(temperature, max_tokens, top_p, max_retries):
+    llm = ChatGoogleGenerativeAI(
+        model="gemini-2.0-flash",
+        temperature=temperature,
+        max_token=max_tokens,
+        top_p=top_p,
+        max_retries=max_retries,
+    )
     llm_prompt_template = """You are an assistant for question-answering tasks.
     Use the following context to answer the question.
     If you don't know the answer, just say that you don't know.
