@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+
 load_dotenv()
 
 import streamlit as st
@@ -22,7 +23,8 @@ if os.path.isdir(ASSETS_DIR):
         SOUND_FILES = [
             os.path.join(ASSETS_DIR, f)
             for f in os.listdir(ASSETS_DIR)
-            if os.path.isfile(os.path.join(ASSETS_DIR, f)) and f.lower().endswith('.mp3')
+            if os.path.isfile(os.path.join(ASSETS_DIR, f))
+            and f.lower().endswith(".mp3")
         ]
     except Exception as e:
         st.toast(f"Could not load sound effects: {e}", icon="⚠️")
@@ -33,12 +35,12 @@ if os.path.isdir(ASSETS_DIR):
             with open(font_path, "rb") as f:
                 font_bytes = f.read()
             font_b64 = base64.b64encode(font_bytes).decode()
-            
+
             font_extension = os.path.splitext(font_filename)[1].lower()
             font_format_map = {
                 ".otf": "opentype",
             }
-            font_format = font_format_map.get(font_extension) 
+            font_format = font_format_map.get(font_extension)
 
             if font_format:
                 FONT_FACE_CSS = f"""
@@ -52,18 +54,17 @@ if os.path.isdir(ASSETS_DIR):
             else:
                 st.toast(f"Unsupported font format for {font_filename}", icon="⚠️")
         else:
-            st.toast(f"Font file '{font_filename}' not found in '{ASSETS_DIR}'.", icon="⚠️")
+            st.toast(
+                f"Font file '{font_filename}' not found in '{ASSETS_DIR}'.", icon="⚠️"
+            )
     except Exception as e:
         st.toast(f"Could not load custom font: {e}", icon="⚠️")
 
 
-st.set_page_config(
-    page_title="SimpsonGPT",
-    page_icon="🍩",
-    layout="wide"
-)
+st.set_page_config(page_title="SimpsonGPT", page_icon="🍩", layout="wide")
 
-st.markdown(f"""
+st.markdown(
+    f"""
 <style>
     {FONT_FACE_CSS}
     body, 
@@ -105,18 +106,25 @@ st.markdown(f"""
         font-size: 2rem;
     }}
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 st.title("The SimpsonGPT")
 
 if "messages" not in st.session_state:
     st.session_state.messages = [
-        {"role": "assistant", "content": "Woo hoo! Je suis prêt à parler des Simpsons. Qu'est-ce que tu veux savoir?"}
+        {
+            "role": "assistant",
+            "content": "Woo hoo! Je suis prêt à parler des Simpsons. Qu'est-ce que tu veux savoir?",
+        }
     ]
 
 
 for message in st.session_state.messages:
-    avatar_icon = HOMER_AVATAR_URL if message["role"] == "assistant" else USER_AVATAR_EMOJI
+    avatar_icon = (
+        HOMER_AVATAR_URL if message["role"] == "assistant" else USER_AVATAR_EMOJI
+    )
     with st.chat_message(message["role"], avatar=avatar_icon):
         st.markdown(message["content"])
 
@@ -131,7 +139,7 @@ if prompt := st.chat_input("Demande quelque chose à propos des Simpsons..."):
             with open(sound_to_play, "rb") as f:
                 audio_bytes = f.read()
             audio_b64 = base64.b64encode(audio_bytes).decode()
-            mime_type = "audio/mpeg" # All sounds are mp3
+            mime_type = "audio/mpeg"  # All sounds are mp3
 
             audio_html = f"""
                 <audio autoplay="true">
@@ -147,15 +155,20 @@ if prompt := st.chat_input("Demande quelque chose à propos des Simpsons..."):
         with st.spinner("D'oh! Je connecte mes neuronnes..."):
             assistant_response_content = ""
             try:
+
                 def stream_response_generator():
                     for chunk in rag_chain.stream(prompt):
                         yield chunk
 
-                assistant_response_content = st.write_stream(stream_response_generator())
-            
+                assistant_response_content = st.write_stream(
+                    stream_response_generator()
+                )
+
             except Exception as e:
                 st.error(f"Ay caramba! Il y a eu une erreur: {e}")
                 assistant_response_content = "Mmm... donuts... J'veux dire que, j'ai eu un problème. Essaie de demander autre chose."
                 st.markdown(assistant_response_content)
-                
-    st.session_state.messages.append({"role": "assistant", "content": assistant_response_content})
+
+    st.session_state.messages.append(
+        {"role": "assistant", "content": assistant_response_content}
+    )

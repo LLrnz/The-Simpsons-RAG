@@ -1,0 +1,2 @@
+USER_AGENT = "Gemini 2.5"
+GOOGLE_API_KEY = "AIzaSyA1NY9hzGZGon0IE_ws4fM3Doblbx6djGg"
