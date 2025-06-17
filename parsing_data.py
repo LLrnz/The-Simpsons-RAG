@@ -106,7 +106,7 @@ def parsing_docs_simpson_archive(urls):
 
         final_docs.append(Document(page_content=text_content, metadata=metadatas))
 
-    return docs
+    return final_docs
 
 
 def transform_text_to_list(text):

@@ -1,3 +1,4 @@
+import csv
 from build_rag_chain import build_url
 
 
@@ -26,9 +27,9 @@ simpsons_park = [
 simpsons_archive = []
 
 with open("scraped_scripts.csv", "r") as file:
-    for l in file.readlines():
-        url = l.split(",")[1]
-        simpsons_archive.append(url)
+    reader = csv.reader(file)
+    for line in reader:
+        simpsons_archive.append(line[1])
     simpsons_archive = simpsons_archive[1:]
 
 
