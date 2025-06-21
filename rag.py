@@ -30,13 +30,13 @@ with open("scraped_scripts.csv", "r") as file:
     reader = csv.reader(file)
     for line in reader:
         simpsons_archive.append(line[1])
-    simpsons_archive = simpsons_archive[1:]
+    simpsons_archive = simpsons_archive[1:30]
 
 
 rag_chain = build_url(
     urls=simpsons_archive,
     temperature=1,
-    max_tokens=500,
+    max_tokens=255,
     top_p=0.1,
     max_retries=3,
     k=3,

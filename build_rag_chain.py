@@ -31,7 +31,7 @@ def create_retriever(url, k):
 
 
 def build_url(urls, temperature=1, max_tokens=256, top_p=1, max_retries=3, k=3):
-    retriever = create_retriever(urls, k)
+    retriever = create_retriever(urls, len(urls))
     llm, llm_prompt = init_llm(temperature, max_tokens, top_p, max_retries)
     rag_chain = create_rag_chain(retriever, llm, llm_prompt)
 
