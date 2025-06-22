@@ -4,7 +4,6 @@ from ragas.metrics import LLMContextPrecisionWithReference, LLMContextRecall, Fa
 import time
 
 import os
-import asyncio
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -14,21 +13,11 @@ os.environ["GOOGLE_API_KEY"] = GOOGLE_API_KEY
 
 
 
-# recall
-def calculate_context_recall_at_k(retrived_source, expected_docs, k=3):
-    # Compter le nombre de documents pertinents récupérés dans les k premiers résultats
-    relevant_retrieved = sum(1 for doc in retrieved_docs[:k] if doc.metadata['source'] in expected_docs)
-    len(retrived_source)
 
-    # Calculer le rappel du contexte
-    total_relevant = len(expected_docs)
-    context_recall_at_k = relevant_retrieved / total_relevant if total_relevant > 0 else 0
-
-    return context_recall_at_k
-
-
-def evaluate_retriever_precision_and_recall(retrieved_sources, expected_sources, k=7):
+def evaluate_retriever_precision_and_recall(retrieved_sources, expected_sources, k=3):
     
+    #print("Sources récupérées :", retrieved_sources[:k])
+    #print("Sources attendues :", expected_sources)
     somme_precision_at_k = 0.0
 
     for rank, source in enumerate(retrieved_sources[:k], start=1):
@@ -134,7 +123,7 @@ for element in test_queries:
         for p in result["paragraphs"]:
             print(p[:200] + "…")  # On affiche les 200 premiers caractères"""
     
-        precision, recall = evaluate_retriever_precision_and_recall(result["sources"], expected_sources, k=3)
+        precision, recall = evaluate_retriever_precision_and_recall(result["sources"], expected_sources, 3)
         faithfulness = evaluate_generation_queries(question, result["answer"], result["paragraphs"], llm_instance)
         print(f"\nScore de la precision : {precision}")
         print(f"\nScore du recall: {recall}")
