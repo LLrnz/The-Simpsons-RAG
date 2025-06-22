@@ -111,7 +111,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.title("The SimpsonGPT")
+st.title("HomerGPT")
 
 if "messages" not in st.session_state:
     st.session_state.messages = [
