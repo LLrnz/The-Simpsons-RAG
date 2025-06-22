@@ -7,6 +7,9 @@ from parsing_data import parsing_docs_simpson_archive
 from retriever import init_retriever
 
 
+
+
+
 def format_docs(docs):
     return "\n\n".join(doc.page_content for doc in docs)
 

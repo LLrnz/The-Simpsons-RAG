@@ -2,6 +2,7 @@ import csv
 from build_rag_chain import build_url
 
 
+
 prompt_template = """Tu es un assistant dont la tache est de répondre à des questions.
     Utilise le contexte suivant pour y répondre. Le context est composé de 12 transcripts des épisodes de la saison 1 des simpsons.
     Chaque épisode commence par le titre de l'épisode, et est composé de plusieurs séquences.
@@ -41,3 +42,4 @@ rag_chain = build_url(
     max_retries=3,
     k=3,
 )
+
