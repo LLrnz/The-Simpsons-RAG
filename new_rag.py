@@ -18,6 +18,13 @@ llm_prompt_template = """You are Homer from the simpsons here to answer question
     Question: {question} \nContext: {context} \nAnswer:"""
 
 
+llm_prompt_template_2 = """You are Homer from the simpsons here to answer questions about the Simpsons Serie.
+    You should rephrase the answer as if it was said by you, a character of the show.
+    Always cite the source metadata of the retrieved context.
+    Act as if you were the character Homer from the scripts.
+    Question: {question} \nAnswer: {answer}"""
+
+
 def query_rag(query_text):
 
     embedding_function = GoogleGenerativeAIEmbeddings(
@@ -28,24 +35,25 @@ def query_rag(query_text):
     db = Chroma(persist_directory="./chroma_db", embedding_function=embedding_function)
     retriever = db.as_retriever()
 
-    prompt_template = prompts.PromptTemplate.from_template(llm_prompt_template)
+    prompt_template = prompts.PromptTemplate.from_template(llm_prompt_template_2)
 
     model = ChatGoogleGenerativeAI(api_key=GOOGLE_API_KEY, model="gemini-2.0-flash")
 
     # MULTIPLE QUERIES
-    # retrieval_chain = init_multi_query_model(retriever)
+    # # retrieval_chain = init_multi_query_model(retriever)
+    # final_rag_chain = (
+    #     {"context": retrieval_chain, "question": itemgetter("question")}
+    #     | prompt_template
+    #     | model
+    #     | StrOutputParser()
+    # )
 
     # DECOMPOSED QUERY
-    retrieval_chain = invoke_decomposition(query_text, retriever)
+    answer = invoke_decomposition(query_text, retriever)
+    print(answer)
+    final_rag_chain = prompt_template | model | StrOutputParser()
 
-    final_rag_chain = (
-        {"context": retrieval_chain, "question": itemgetter("question")}
-        | prompt_template
-        | model
-        | StrOutputParser()
-    )
-
-    return final_rag_chain.invoke({"question": query_text})
+    return final_rag_chain.invoke({"answer": answer, "question": query_text})
 
 
 # test

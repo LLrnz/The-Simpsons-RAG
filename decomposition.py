@@ -38,7 +38,7 @@ def answer_questions(questions, retriever):
 
     \n --- \n {context} \n --- \n
 
-    Use the above context and any background question + answer pairs to answer the question: \n {question}
+    Use the above context and any background question + answer pairs to answer the question: \n {question}. Always cite the source metadata of the retrieved context.
     """
 
     decomposition_prompt = prompts.PromptTemplate.from_template(template)
@@ -81,7 +81,7 @@ def invoke_decomposition(query, retriever):
 
     {context}
 
-    Use these to synthesize an answer to the question: {question}
+    Use these to synthesize an answer to the question: {question}. Always cite the source metadata of the retrieved context.
     """
 
     prompt = prompts.PromptTemplate.from_template(template)
@@ -91,4 +91,4 @@ def invoke_decomposition(query, retriever):
 
     final_rag_chain = prompt | llm | StrOutputParser()
 
-    return final_rag_chain
+    return final_rag_chain.invoke({"context": context, "question": query})

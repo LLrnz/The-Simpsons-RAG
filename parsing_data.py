@@ -1,8 +1,11 @@
 from langchain.docstore.document import Document
 from langchain_community.document_loaders import WebBaseLoader
 import os
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_core import prompts
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain.schema import StrOutputParser
 
 
 def parsing_docs(url):
@@ -132,7 +135,7 @@ def transform_text_to_list(text):
 def split_documents(docs):
     # Initialize text splitter with specified parameters
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=900,  # Size of each chunk in characters
+        chunk_size=500,  # Size of each chunk in characters
         chunk_overlap=200,  # Overlap between consecutive chunks
         length_function=len,  # Function to compute the length of the text
         add_start_index=True,  # Flag to add start index to each chunk
