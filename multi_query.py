@@ -6,7 +6,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from API_KEY_PRIVATE import GOOGLE_API_KEY
 
 
-def init_multi_query_model(vector_store):
+def init_multi_query_model(retriever):
     # Multi Query: Different Perspectives. Source : https://github.com/langchain-ai/rag-from-scratch/blob/main/rag_from_scratch_5_to_9.ipynb
     template = """You are an AI language model assistant. Your task is to generate five 
   different versions of the given user question to retrieve relevant documents from a vector 
@@ -18,7 +18,7 @@ def init_multi_query_model(vector_store):
     llm = ChatGoogleGenerativeAI(
         api_key=GOOGLE_API_KEY, model="gemini-2.0-flash", temperature=0
     )
-    retriever = vector_store.as_retriever()
+
     generate_queries = (
         prompt_perspectives | llm | StrOutputParser() | (lambda x: x.split("\n"))
     )

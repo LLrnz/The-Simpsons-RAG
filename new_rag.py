@@ -8,6 +8,7 @@ from API_KEY_PRIVATE import GOOGLE_API_KEY
 
 from langchain_core import prompts
 
+from decomposition import invoke_decomposition
 from multi_query import init_multi_query_model
 
 llm_prompt_template = """You are Homer from the simpsons here to answer questions about the Simpsons Serie.
@@ -18,41 +19,24 @@ llm_prompt_template = """You are Homer from the simpsons here to answer question
 
 
 def query_rag(query_text):
-    """
-    Query a Retrieval-Augmented Generation (RAG) system using Chroma database and OpenAI.
-    Args:
-      - query_text (str): The text to query the RAG system with.
-    Returns:
-      - formatted_response (str): Formatted response including the generated text and sources.
-      - response_text (str): The generated response text.
-    """
-    # YOU MUST - Use same embedding function as before
+
     embedding_function = GoogleGenerativeAIEmbeddings(
         google_api_key=GOOGLE_API_KEY, model="models/embedding-001"
     )
 
-    # Prepare the database
+    # récuper le vectorstore
     db = Chroma(persist_directory="./chroma_db", embedding_function=embedding_function)
+    retriever = db.as_retriever()
 
-    # Retrieving the context from the DB using similarity search
-    results = db.similarity_search_with_relevance_scores(query_text, k=3)
-
-    # Check if there are any matching results or if the relevance score is too low
-    if len(results) == 0 or results[0][1] < 0.7:
-        print(f"Unable to find matching results.")
-
-    # Combine context from matching documents
-    context_text = "\n\n - -\n\n".join([doc.page_content for doc, _score in results])
-
-    # Create prompt template using context and query text
     prompt_template = prompts.PromptTemplate.from_template(llm_prompt_template)
-    # prompt = prompt_template.format(context=context_text, question=query_text)
 
-    # Initialize OpenAI chat model
     model = ChatGoogleGenerativeAI(api_key=GOOGLE_API_KEY, model="gemini-2.0-flash")
 
     # MULTIPLE QUERIES
-    retrieval_chain = init_multi_query_model(db)
+    # retrieval_chain = init_multi_query_model(retriever)
+
+    # DECOMPOSED QUERY
+    retrieval_chain = invoke_decomposition(query_text, retriever)
 
     final_rag_chain = (
         {"context": retrieval_chain, "question": itemgetter("question")}
@@ -63,18 +47,7 @@ def query_rag(query_text):
 
     return final_rag_chain.invoke({"question": query_text})
 
-    # # Generate response text based on the prompt
-    # response_text = model.invoke(prompt)
 
-    # # Get sources of the matching documents
-    # sources = [doc.metadata.get("source", None) for doc, _score in results]
-
-    # # Format and return response including generated text and sources
-    # formatted_response = f"Response: {response_text}\nSources: {sources}"
-    # return formatted_response, response_text
-
-
-# Let's call our function we have defined
+# test
 response_text = query_rag("Who is Apu?")
-# and finally, inspect our final response!
 print(response_text)
