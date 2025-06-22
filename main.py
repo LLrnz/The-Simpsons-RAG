@@ -62,7 +62,7 @@ if os.path.isdir(ASSETS_DIR):
         st.toast(f"Could not load custom font: {e}", icon="⚠️")
 
 
-st.set_page_config(page_title="SimpsonGPT", page_icon="🍩", layout="wide")
+st.set_page_config(page_title="HomerGPT", page_icon="🍩", layout="wide")
 
 st.markdown(
     f"""
