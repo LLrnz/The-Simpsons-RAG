@@ -8,6 +8,7 @@ from API_KEY_PRIVATE import GOOGLE_API_KEY
 
 from langchain_core import prompts
 
+from decomposition import invoke_decomposition
 from multi_query import init_multi_query_model
 
 llm_prompt_template = """You are Homer from the simpsons here to answer questions about the Simpsons Serie.
@@ -17,32 +18,35 @@ llm_prompt_template = """You are Homer from the simpsons here to answer question
     Question: {question} \nContext: {context} \nAnswer:"""
 
 
-def run(query_text):
+llm_prompt_template_2 = """You are Homer from the simpsons here to answer questions about the Simpsons Serie.
+    You should rephrase the answer as if it was said by you, a character of the show.
+    Always cite the source metadata of the retrieved context.
+    Act as if you were the character Homer from the scripts.
+    Question: {question} \nAnswer: {answer}"""
+
+
+def query_rag(query_text):
+
     embedding_function = GoogleGenerativeAIEmbeddings(
         google_api_key=GOOGLE_API_KEY, model="models/embedding-001"
     )
 
+    # récuper le vectorstore
     db = Chroma(persist_directory="./chroma_db", embedding_function=embedding_function)
+    retriever = db.as_retriever()
 
-    # Retrieving the context from the DB using similarity search
-    results = db.similarity_search_with_relevance_scores(query_text, k=3)
+    prompt_template = prompts.PromptTemplate.from_template(llm_prompt_template_2)
 
-    # Check if there are any matching results or if the relevance score is too low
-    if len(results) == 0 or results[0][1] < 0.7:
-        print(f"Unable to find matching results.")
-
-    # Combine context from matching documents
-    context_text = "\n\n - -\n\n".join([doc.page_content for doc, _score in results])
-
-    # Create prompt template using context and query text
-    prompt_template = prompts.PromptTemplate.from_template(llm_prompt_template)
-    # prompt = prompt_template.format(context=context_text, question=query_text)
-
-    # Initialize OpenAI chat model
     model = ChatGoogleGenerativeAI(api_key=GOOGLE_API_KEY, model="gemini-2.0-flash")
 
     # MULTIPLE QUERIES
-    retrieval_chain = init_multi_query_model(db)
+    # # retrieval_chain = init_multi_query_model(retriever)
+    # final_rag_chain = (
+    #     {"context": retrieval_chain, "question": itemgetter("question")}
+    #     | prompt_template
+    #     | model
+    #     | StrOutputParser()
+    # )
 
     final_rag_chain = (
         {"context": retrieval_chain, "question": itemgetter("question")}
@@ -89,7 +93,6 @@ def query_rag(query_text):
     # return formatted_response, response_text
 
 
-# Let's call our function we have defined
+# test
 response_text = query_rag("Who is Apu?")
-# and finally, inspect our final response!
 print(response_text)
