@@ -153,3 +153,108 @@ Answer: Jessica Lovejoy, the reverend’s daughter. [1F19]
 
 Question: What crime does Jessica commit?
 Answer: She steals money from the church collection plate. [1F19]
+
+Episode 3F21
+Question: What is the name of the children’s news program Lisa joins?
+Answer: "Kidz Newz." [3F21]
+
+Question: Why does Lisa leave the news show?
+Answer: She quits after being told to add more sensationalism. [3F21]
+
+Episode 3F22
+Question: What job does Homer get in this episode?
+Answer: He becomes a food critic. [3F22]
+
+Question: Why is Lisa concerned about Homer’s reviews?
+Answer: They’re too positive, even for bad restaurants. [3F22]
+
+Episode 3F23
+Question: What mysterious trend starts happening in Springfield?
+Answer: People begin acting strangely, due to a military experiment involving satellite signals. [3F23]
+
+Question: What do the townspeople destroy to stop the madness?
+Answer: The satellite dish on top of the school. [3F23]
+
+Episode 3F24
+Question: Why does Bart get sent to military school?
+Answer: As punishment for a prank involving a fake wedding. [3F24]
+
+Question: Who chooses to join him at the academy?
+Answer: Lisa, wanting to prove she can handle it too. [3F24]
+
+Episode 3F31
+Question: What form of art does Homer become passionate about?
+Answer: Outsider art after accidentally destroying his BBQ pit. [3F31]
+
+Question: How does Homer end up presenting his work?
+Answer: At the Springfield Art Museum in a modern art exhibition. [3F31]
+
+Episode 3G01
+Question: What item does Bart donate to the church that causes controversy?
+Answer: A bear-baiting chair. [3G01]
+
+Question: What is the main focus of the episode?
+Answer: The townspeople creating a secretive “Hell” for children in the First Church of Springfield. [3G01]
+
+Episode 3G02
+Question: What new character is introduced as Bart’s rival?
+Answer: Greta Wolfcastle, daughter of Rainier Wolfcastle. [3G02]
+
+Question: Where does Bart go to win Greta back?
+Answer: Toronto, Canada. [3G02]
+
+Episode 3G03
+Question: Why does Homer enter a chili cook-off?
+Answer: To prove he’s a chili-eating champion. [3G03]
+
+Question: What hallucination does Homer experience?
+Answer: He embarks on a spiritual journey after eating Guatemalan insanity peppers. [3G03]
+
+Episode 4F01
+Question: What does Homer do to become more intelligent?
+Answer: He gets a crayon removed from his brain. [4F01]
+
+Question: Why does Homer ultimately reverse the surgery?
+Answer: Because being smart alienates him from his friends and family. [4F01]
+
+Episode 4F02
+Question: Why does Bart fail a history test?
+Answer: He gets distracted by a bird outside the classroom window. [4F02]
+
+Question: What does Marge do to help Bart?
+Answer: She helps him build a model of a historic battle to retake the test. [4F02]
+
+Episode 4F03
+Question: What is Homer’s new job in this episode?
+Answer: He becomes a personal assistant to Alec Baldwin and Kim Basinger. [4F03]
+
+Question: What causes Homer to fall out with the celebrities?
+Answer: He reveals their secret hideout to the public. [4F03]
+
+Episode 4F04
+Question: What is the purpose of the church-themed gambling night?
+Answer: To raise money for repairs to the church. [4F04]
+
+Question: What does Homer do during the event?
+Answer: He wins and donates his winnings back to the church. [4F04]
+
+Episode 4F05
+Question: Who does Lisa develop a crush on?
+Answer: Nelson Muntz. [4F05]
+
+Question: Why does Lisa ultimately break things off?
+Answer: She realizes Nelson is not truly interested in changing his bad behavior. [4F05]
+
+Episode 4F06
+Question: What’s the main plot of the episode?
+Answer: Bart and Lisa write a script under Grampa’s name that becomes a hit. [4F06]
+
+Question: How does Grampa respond when he learns the truth?
+Answer: He feels used and decides to write his own story. [4F06]
+
+Episode 4F07
+Question: Why is Marge sent to jail?
+Answer: She is mistakenly arrested for shoplifting. [4F07]
+
+Question: How does her absence affect the family?
+Answer: The house falls into disrepair and the family struggles. [4F07]
