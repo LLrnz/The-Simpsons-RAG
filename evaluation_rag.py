@@ -4,6 +4,7 @@ from ragas.metrics import LLMContextPrecisionWithReference, LLMContextRecall, Fa
 import time
 
 import os
+import asyncio
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -13,21 +14,38 @@ os.environ["GOOGLE_API_KEY"] = GOOGLE_API_KEY
 
 
 
-def evaluate_retriever_queries(question, generated_answer, retrieved_paragraphs, llm):
-    sample = SingleTurnSample(
-        user_input=question,
-        response=generated_answer,
-        retrieved_contexts=retrieved_paragraphs
-    )
-    evaluator_precision =LLMContextPrecisionWithReference(llm=LangchainLLMWrapper(llm))
-    evaluator_recall = LLMContextRecall(llm=LangchainLLMWrapper(llm))
-   
-    precision_score = evaluator_precision.single_turn_ascore(sample)
-    recall_score = evaluator_recall.single_turn_ascore(sample)
+# recall
+def calculate_context_recall_at_k(retrived_source, expected_docs, k=3):
+    # Compter le nombre de documents pertinents récupérés dans les k premiers résultats
+    relevant_retrieved = sum(1 for doc in retrieved_docs[:k] if doc.metadata['source'] in expected_docs)
+    len(retrived_source)
+
+    # Calculer le rappel du contexte
+    total_relevant = len(expected_docs)
+    context_recall_at_k = relevant_retrieved / total_relevant if total_relevant > 0 else 0
+
+    return context_recall_at_k
+
+
+def evaluate_retriever_precision_and_recall(retrieved_sources, expected_sources, k=7):
     
-    return precision_score, recall_score
+    somme_precision_at_k = 0.0
 
+    for rank, source in enumerate(retrieved_sources[:k], start=1):
+        if source in expected_sources:
+            somme_precision_at_k += 1 / rank
 
+    # on normalise par le nombre maximal de précision pondérée
+    max_precision = sum(1 / (i + 1) for i in range(k))
+    context_precision_at_k = somme_precision_at_k / max_precision
+
+    relevant_retrieved = sum(1 for source in retrieved_sources[:k] if source in expected_sources)
+
+    total_relevant = len(expected_sources)
+    context_recall_at_k = relevant_retrieved / total_relevant if total_relevant > 0 else 0
+
+    return context_precision_at_k, context_recall_at_k
+       
 
 def evaluate_generation_queries(question, generated_answer, retrieved_paragraphs, llm):
     
@@ -43,7 +61,8 @@ def evaluate_generation_queries(question, generated_answer, retrieved_paragraphs
 
 
 
-from rag import rag_chain
+
+from new_rag import run
 from langchain_google_genai import ChatGoogleGenerativeAI
 llm_instance = ChatGoogleGenerativeAI(model="gemini-2.0-flash")
 
@@ -94,39 +113,38 @@ test_queries = [
     },
 ]
 
-#liste pour stocker les résultats (question, réponse, precision, recall, faithfulness)
+#liste pour stocker les résultats (question, réponse, faithfulness)
 results_summary = []
 
 for element in test_queries:
     question = element["query"]
+    expected_sources = element["expected_docs"]
     print(f"\n Question : {question}")
     try:
-        résultat = rag_chain({"query": question})
-
-        answer = résultat["result"]
-        sources = résultat.get("source_documents", [])
-        paragraphs = [doc.page_content for doc in sources]
-        
+        result = run(question)
 
         print("\nRéponse générée :")
-        print(answer)
+        print(result["answer"])
 
         print("\nSources retenues :")
-        for md in sources:
+        for md in result["sources"]:
             print(md)
 
+        """print("\nParagraphes extraits :")
+        for p in result["paragraphs"]:
+            print(p[:200] + "…")  # On affiche les 200 premiers caractères"""
     
-        context_precision, context_recall = evaluate_retriever_queries(question, answer, paragraphs, llm_instance)
-        faithfulness = evaluate_generation_queries(question, answer, paragraphs, llm_instance)
-        print(f"\nScore de precision : {context_precision}")
-        print(f"\nScore de recall : {context_recall}")
+        precision, recall = evaluate_retriever_precision_and_recall(result["sources"], expected_sources, k=3)
+        faithfulness = evaluate_generation_queries(question, result["answer"], result["paragraphs"], llm_instance)
+        print(f"\nScore de la precision : {precision}")
+        print(f"\nScore du recall: {recall}")
         print(f"\nScore de faithfulness : {faithfulness}")
 
         results_summary.append({
             "question": question,
-            "answer": answer,
-            "precision": context_precision,
-            "recall" : context_recall,
+            "answer": result["answer"],
+            "precision" : precision,
+            "recall" : recall,
             "faithfulness" : faithfulness
         })
 
@@ -138,18 +156,16 @@ for element in test_queries:
 
 
 print("\n\n Analyse générale :")
-precisions_scores = []
-recall_scores =[]
+precision_scores = []
+recall_scores = []
 faithfulness_scores = []
 
 for element in results_summary:
-    precisions_scores.append(element["precision"])
-    recall_scores.append(element["recall"])
     faithfulness_scores.append(element["faithfulness"])
     
 print("\n Etude du retriever :")
-print(f'\n précision moyenne : {sum(precisions_scores)/len(precisions_scores)} ')
-print(f'\n recall moyen : {sum(recall_scores)/len(recall_scores)}')
+print(f'\n Moyenne de la précision : {sum(precision_scores) / len(precision_scores)}')
+print(f'\n Moyenne du recall : {sum(recall_scores) / len(recall_scores)}')
 print("\n Etude de la génération :")
-print(f'\n faithfulness moyenne : {sum(faithfulness_scores) / len(faithfulness_scores)}')
+print(f'\n Moyenne de la faithfulness  : {sum(faithfulness_scores) / len(faithfulness_scores)}')
 

@@ -17,21 +17,11 @@ llm_prompt_template = """You are Homer from the simpsons here to answer question
     Question: {question} \nContext: {context} \nAnswer:"""
 
 
-def query_rag(query_text):
-    """
-    Query a Retrieval-Augmented Generation (RAG) system using Chroma database and OpenAI.
-    Args:
-      - query_text (str): The text to query the RAG system with.
-    Returns:
-      - formatted_response (str): Formatted response including the generated text and sources.
-      - response_text (str): The generated response text.
-    """
-    # YOU MUST - Use same embedding function as before
+def run(query_text):
     embedding_function = GoogleGenerativeAIEmbeddings(
         google_api_key=GOOGLE_API_KEY, model="models/embedding-001"
     )
 
-    # Prepare the database
     db = Chroma(persist_directory="./chroma_db", embedding_function=embedding_function)
 
     # Retrieving the context from the DB using similarity search
@@ -60,8 +50,33 @@ def query_rag(query_text):
         | model
         | StrOutputParser()
     )
+        # Execute the query and get the results
+    result = final_rag_chain.invoke({"question": query_text})
 
-    return final_rag_chain.invoke({"question": query_text})
+    sources = [doc.metadata.get("source", None) for doc, _score in results]
+
+    # Collect paragraphs from retrieved documents
+    paragraphs = [doc.page_content for doc, _score in results]
+
+    return {
+        "answer": result,
+        "paragraphs": paragraphs,
+        "sources" : sources
+    }
+
+
+def query_rag(query_text):
+    """
+    Query a Retrieval-Augmented Generation (RAG) system using Chroma database and OpenAI.
+    Args:
+      - query_text (str): The text to query the RAG system with.
+    Returns:
+      - formatted_response (str): Formatted response including the generated text and sources.
+      - response_text (str): The generated response text.
+    """
+   
+    result = run(query_text)
+    return result["answer"]
 
     # # Generate response text based on the prompt
     # response_text = model.invoke(prompt)
