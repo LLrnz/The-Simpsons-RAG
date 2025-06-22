@@ -8,6 +8,7 @@ import os
 import random
 import base64
 
+
 HOMER_AVATAR_URL = "assets/homer.png"
 USER_AVATAR_EMOJI = "🍩"
 
@@ -172,3 +173,4 @@ if prompt := st.chat_input("Ask something about the Simpsons..."):
     st.session_state.messages.append(
         {"role": "assistant", "content": assistant_response_content}
     )
+

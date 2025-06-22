@@ -18,6 +18,9 @@ llm_prompt_template = """You are Homer from the simpsons here to answer question
     Question: {question} \nContext: {context} \nAnswer:"""
 
 
+
+
+
 def format_docs(docs):
     return "\n\n".join(doc.page_content for doc in docs)
 
