@@ -2,6 +2,8 @@ from langchain.docstore.document import Document
 from langchain_community.document_loaders import WebBaseLoader
 import os
 
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
 
 def parsing_docs(url):
     user_agent = os.getenv("USER_AGENT")
@@ -106,6 +108,8 @@ def parsing_docs_simpson_archive(urls):
 
         final_docs.append(Document(page_content=text_content, metadata=metadatas))
 
+    final_docs = split_documents(final_docs)
+
     return final_docs
 
 
@@ -123,3 +127,16 @@ def transform_text_to_list(text):
             name = line[1:].strip()
             names.append(name)
     return str(names)
+
+
+def split_documents(docs):
+    # Initialize text splitter with specified parameters
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=900,  # Size of each chunk in characters
+        chunk_overlap=200,  # Overlap between consecutive chunks
+        length_function=len,  # Function to compute the length of the text
+        add_start_index=True,  # Flag to add start index to each chunk
+    )
+
+    chunks = text_splitter.split_documents(docs)
+    return chunks
