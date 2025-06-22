@@ -1,6 +1,6 @@
 from ragas import SingleTurnSample
 from ragas.llms import LangchainLLMWrapper
-from ragas.metrics import LLMContextPrecisionWithReference, LLMContextRecall, Faithfulness
+from ragas.metrics import Faithfulness
 import time
 
 import os
@@ -27,10 +27,18 @@ def evaluate_retriever_precision_and_recall(retrieved_sources, expected_sources,
     # on normalise par le nombre maximal de précision pondérée
     max_precision = sum(1 / (i + 1) for i in range(k))
     context_precision_at_k = somme_precision_at_k / max_precision
+    
+    sources_deja_compte = []
+    total_relevant = 0
+    
+    for source in retrieved_sources:
+        if source not in sources_deja_compte:
+            total_relevant += 1
+            sources_deja_compte.append(source)
 
-    relevant_retrieved = sum(1 for source in retrieved_sources[:k] if source in expected_sources)
+    relevant_retrieved = sum(1 for source in sources_deja_compte[:k] if source in expected_sources)
 
-    total_relevant = len(expected_sources)
+    
     context_recall_at_k = relevant_retrieved / total_relevant if total_relevant > 0 else 0
 
     return context_precision_at_k, context_recall_at_k
@@ -66,39 +74,20 @@ test_queries = [
         "expected_docs": ["https://www.simpsonsarchive.com/episodes/1F08.html"],
     },
     {
-        "query": "Who is the director of  Lisa's Date With Density?",
-        "expected_docs": ["https://www.simpsonsarchive.com/episodes/4F01.html"],
+        "query": "Who wrote the episode Treehouse of Horror IV ?",
+        "expected_docs": ["https://www.simpsonsarchive.com/episodes/1F04.html"],
     },
     {
-        "query": "When was Maggie born?",
-        "expected_docs": ["https://www.simpsonsarchive.com/episodes/2F10.html"],
-    },
-    {
-        "query": "What does Hommer do so he can work from home?",
-        "expected_docs": ["https://www.simpsonsarchive.com/episodes/3F05.html"],
-    },
-    {
-        "query": "Whith whom Bart goes to tennessee?",
-        "expected_docs": ["https://www.simpsonsarchive.com/episodes/3F17.html"],
+        "query": "Who directed the episode number 1F17 ?",
+        "expected_docs": ["https://www.simpsonsarchive.com/episodes/1F17.html"],
     },
     {
         "query": "What are the funfacts about Sideshow Bob Roberts?",
         "expected_docs": ["https://www.simpsonsarchive.com/episodes/2F02.html"],
     },
     {
-        "query": "In which episodes does Wiggum appears?",
-        "expected_docs": ["https://www.simpsonsarchive.com/episodes/2F21.html"],
-    },
-    {
-        "query": "Who is the main suspect of Mr. Burns murder? I do not want the true culprit.",
-        "expected_docs": [
-            "https://www.simpsonsarchive.com/episodes/2F20.html",
-            "https://www.simpsonsarchive.com/episodes/2F16.html",
-        ],
-    },
-    {
-        "query": "Who dubs Burns?",
-        "expected_docs": ["https://www.simpsonsarchive.com/episodes/1F16.html"],
+        "query": "In which episode does Itchy has a knife in Scratchy's eye in the I&S title clip?",
+        "expected_docs": ["https://www.simpsonsarchive.com/episodes/2F01.html"],
     },
 ]
 
@@ -150,6 +139,8 @@ recall_scores = []
 faithfulness_scores = []
 
 for element in results_summary:
+    precision_scores.append(element["precision"])
+    recall_scores.append(element["recall"])
     faithfulness_scores.append(element["faithfulness"])
     
 print("\n Etude du retriever :")
