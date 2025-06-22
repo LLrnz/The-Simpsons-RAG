@@ -48,12 +48,49 @@ def query_rag(query_text):
     #     | StrOutputParser()
     # )
 
-    # DECOMPOSED QUERY
-    answer = invoke_decomposition(query_text, retriever)
-    print(answer)
-    final_rag_chain = prompt_template | model | StrOutputParser()
+    final_rag_chain = (
+        {"context": retrieval_chain, "question": itemgetter("question")}
+        | prompt_template
+        | model
+        | StrOutputParser()
+    )
+        # Execute the query and get the results
+    result = final_rag_chain.invoke({"question": query_text})
 
-    return final_rag_chain.invoke({"answer": answer, "question": query_text})
+    sources = [doc.metadata.get("source", None) for doc, _score in results]
+
+    # Collect paragraphs from retrieved documents
+    paragraphs = [doc.page_content for doc, _score in results]
+
+    return {
+        "answer": result,
+        "paragraphs": paragraphs,
+        "sources" : sources
+    }
+
+
+def query_rag(query_text):
+    """
+    Query a Retrieval-Augmented Generation (RAG) system using Chroma database and OpenAI.
+    Args:
+      - query_text (str): The text to query the RAG system with.
+    Returns:
+      - formatted_response (str): Formatted response including the generated text and sources.
+      - response_text (str): The generated response text.
+    """
+   
+    result = run(query_text)
+    return result["answer"]
+
+    # # Generate response text based on the prompt
+    # response_text = model.invoke(prompt)
+
+    # # Get sources of the matching documents
+    # sources = [doc.metadata.get("source", None) for doc, _score in results]
+
+    # # Format and return response including generated text and sources
+    # formatted_response = f"Response: {response_text}\nSources: {sources}"
+    # return formatted_response, response_text
 
 
 # test

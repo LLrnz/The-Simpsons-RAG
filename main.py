@@ -8,6 +8,7 @@ import os
 import random
 import base64
 
+
 HOMER_AVATAR_URL = "assets/homer.png"
 USER_AVATAR_EMOJI = "🍩"
 
@@ -61,7 +62,7 @@ if os.path.isdir(ASSETS_DIR):
         st.toast(f"Could not load custom font: {e}", icon="⚠️")
 
 
-st.set_page_config(page_title="SimpsonGPT", page_icon="🍩", layout="wide")
+st.set_page_config(page_title="HomerGPT", page_icon="🍩", layout="wide")
 
 st.markdown(
     f"""
@@ -110,7 +111,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.title("The SimpsonGPT")
+st.title("HomerGPT")
 
 if "messages" not in st.session_state:
     st.session_state.messages = [
@@ -172,3 +173,4 @@ if prompt := st.chat_input("Ask something about the Simpsons..."):
     st.session_state.messages.append(
         {"role": "assistant", "content": assistant_response_content}
     )
+
